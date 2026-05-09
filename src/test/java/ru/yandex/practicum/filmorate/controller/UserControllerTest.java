@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -11,67 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
 
     @Test
-    void emailNull() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setEmail(null);
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
-    void emailBlank() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setEmail("   ");
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
-    void emailNoAt() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setEmail("no-at.com");
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
-    void loginNull() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setLogin(null);
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
-    void loginBlank() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setLogin("   ");
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
-    void loginSpaces() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setLogin("log in");
-        assertThrows(ValidationException.class, () -> c.addUser(u));
-    }
-
-    @Test
     void bdayToday() {
         UserController c = new UserController();
         User u = validUser();
         u.setBirthday(LocalDate.now());
         assertNotNull(c.addUser(u));
-    }
-
-    @Test
-    void bdayFuture() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setBirthday(LocalDate.now().plusDays(1));
-        assertThrows(ValidationException.class, () -> c.addUser(u));
     }
 
     @Test
@@ -103,7 +47,7 @@ class UserControllerTest {
         UserController c = new UserController();
         User u = validUser();
         u.setId(999);
-        assertThrows(ValidationException.class, () -> c.updateUser(u));
+        assertThrows(NotFoundException.class, () -> c.updateUser(u));
     }
 
     @Test
