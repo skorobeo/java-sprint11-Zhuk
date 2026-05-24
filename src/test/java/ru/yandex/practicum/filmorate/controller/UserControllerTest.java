@@ -2,68 +2,72 @@ package ru.yandex.practicum.filmorate.controller;
 
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
 
+
+    private final InMemoryUserStorage userStorage = new InMemoryUserStorage();
+    private final UserService userService = new UserService(userStorage);
+
     @Test
     void bdayToday() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setBirthday(LocalDate.now());
-        assertNotNull(c.addUser(u));
+        UserController controller = new UserController(userService);
+        User user = validUser();
+        user.setBirthday(LocalDate.now());
+        assertNotNull(controller.addUser(user));
     }
 
     @Test
     void nameUsesLogin() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setName(null);
-        assertEquals("validLogin", c.addUser(u).getName());
+        UserController controller = new UserController(userService);
+        User user = validUser();
+        user.setName(null);
+        assertEquals("validLogin", controller.addUser(user).getName());
     }
 
     @Test
     void nameBlankUsesLogin() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setName("   ");
-        assertEquals("validLogin", c.addUser(u).getName());
+        UserController controller = new UserController(userService);
+        User user = validUser();
+        user.setName("   ");
+        assertEquals("validLogin", controller.addUser(user).getName());
     }
 
     @Test
     void createOk() {
-        UserController c = new UserController();
-        User r = c.addUser(validUser());
-        assertEquals(1, r.getId());
-        assertEquals(1, c.getAllUsers().size());
+        UserController controller = new UserController(userService);
+        User user = controller.addUser(validUser());
+        assertEquals(1, user.getId());
+        assertEquals(1, controller.getAllUsers().size());
     }
 
     @Test
     void updNotFound() {
-        UserController c = new UserController();
-        User u = validUser();
-        u.setId(999);
-        assertThrows(NotFoundException.class, () -> c.updateUser(u));
+        UserController controller = new UserController(userService);
+        User user = validUser();
+        user.setId(999);
+        assertThrows(NotFoundException.class, () -> controller.updateUser(user));
     }
 
     @Test
     void updOk() {
-        UserController c = new UserController();
-        User created = c.addUser(validUser());
+        UserController controller = new UserController(userService);
+        User created = controller.addUser(validUser());
         created.setEmail("new@x.com");
-        assertEquals("new@x.com", c.updateUser(created).getEmail());
+        assertEquals("new@x.com", controller.updateUser(created).getEmail());
     }
 
     private User validUser() {
-        User u = new User();
-        u.setEmail("a@b.com");
-        u.setLogin("validLogin");
-        u.setName("Имя");
-        u.setBirthday(LocalDate.of(1990, 1, 1));
-        return u;
+        User user = new User();
+        user.setEmail("a@b.com");
+        user.setLogin("validLogin");
+        user.setName("Имя");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+        return user;
     }
 }
