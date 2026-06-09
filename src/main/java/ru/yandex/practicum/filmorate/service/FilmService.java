@@ -36,21 +36,21 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
-    public Film getId(int id) {
-        return filmStorage.getId(id);
+    public Film getById(long id) {
+        return filmStorage.getById(id);
     }
 
-    public void addLike(int filmId, int userId) {
-        Film film = getId(filmId);
-        userStorage.getId(userId);
+    public void addLike(long filmId, long userId) {
+        Film film = getById(filmId);
+        userStorage.getById(userId);
         film.getLikes().add(userId);
 
         log.info("Пользователь {} поставил лайк фильму {}", userId, filmId);
     }
 
-    public void removeLike(int filmId, int userId) {
-        Film film = getId(filmId);
-        userStorage.getId(userId);
+    public void removeLike(long filmId, long userId) {
+        Film film = getById(filmId);
+        userStorage.getById(userId);
         film.getLikes().remove(userId);
 
         log.info("Пользователь {} убрал лайк с фильма {}", userId, filmId);

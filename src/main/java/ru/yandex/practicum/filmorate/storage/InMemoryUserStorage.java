@@ -13,9 +13,9 @@ import java.util.HashMap;
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private final Map<Integer, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
-    private int currentId = 1;
+    private long currentId = 1;
 
     @Override
     public List<User> getAll() {
@@ -39,7 +39,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getId(int id) {
+    public User getById(long id) {
         User user = users.get(id);
         if (user == null) {
             throw new NotFoundException("Пользователь с id=" + id + " не найден");
@@ -48,7 +48,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(long id) {
         if (users.remove(id) == null) {
             throw new NotFoundException("Пользователь с id=" + id + " не найден");
         }

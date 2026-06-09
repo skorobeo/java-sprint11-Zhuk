@@ -25,10 +25,12 @@ public class UserService {
     }
 
     public User add(User user) {
+        applyNameFallback(user);
         return userStorage.add(user);
     }
 
     public User update(User user) {
+        applyNameFallback(user);
         return userStorage.update(user);
     }
 
@@ -36,46 +38,52 @@ public class UserService {
         return userStorage.getAll();
     }
 
-    public User getId(int id) {
-        return userStorage.getId(id);
+    public User getById(long id) {
+        return userStorage.getById(id);
     }
 
-    public void addFriend(int userId, int friendId) {
-        User user = getId(userId);
-        User friend = getId(friendId);
+    public void addFriend(long userId, long friendId) {
+        User user = getById(userId);
+        User friend = getById(friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
 
         log.info("Пользователи {} и {} теперь друзья", userId, friendId);
     }
 
-    public void removeFriend(int userId, int friendId) {
-        User user = getId(userId);
-        User friend = getId(friendId);
+    public void removeFriend(long userId, long friendId) {
+        User user = getById(userId);
+        User friend = getById(friendId);
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
         log.info("Пользователи {} и {} больше не друзья", userId, friendId);
     }
 
-    public List<User> getFriends(int userId) {
-        User user = getId(userId);
+    public List<User> getFriends(long userId) {
+        User user = getById(userId);
         List<User> friendsList = new ArrayList<>();
-        for (Integer friendId : user.getFriends()) {
-            friendsList.add(getId(friendId));
+        for (Long friendId : user.getFriends()) {
+            friendsList.add(getById(friendId));
         }
         return friendsList;
     }
 
-    public List<User> getCommonFriends(int userId, int otherId) {
-        User user = getId(userId);
-        User other = getId(otherId);
-        Set<Integer> common = new HashSet<>(user.getFriends());
+    public List<User> getCommonFriends(long userId, long otherId) {
+        User user = getById(userId);
+        User other = getById(otherId);
+        Set<Long> common = new HashSet<>(user.getFriends());
 
         common.retainAll(other.getFriends());
         List<User> commonFriends = new ArrayList<>();
-        for (Integer id : common) {
-            commonFriends.add(getId(id));
+        for (Long id : common) {
+            commonFriends.add(getById(id));
         }
         return commonFriends;
+    }
+
+    private void applyNameFallback(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }
